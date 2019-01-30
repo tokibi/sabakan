@@ -22,7 +22,7 @@ require (
 	github.com/onsi/ginkgo v1.7.0
 	github.com/onsi/gomega v1.4.3
 	github.com/pkg/errors v0.8.0
-	github.com/prometheus/client_golang v0.9.1 // indirect
+	github.com/prometheus/client_golang v0.9.1
 	github.com/prometheus/common v0.0.0-20181126121408-4724e9255275 // indirect
 	github.com/prometheus/procfs v0.0.0-20181126161756-619930b0b471 // indirect
 	github.com/sergi/go-diff v1.0.0 // indirect
