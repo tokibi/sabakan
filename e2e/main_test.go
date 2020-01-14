@@ -26,18 +26,6 @@ func init() {
 }
 
 func testMain(m *testing.M) (int, error) {
-	stopEtcd := runEtcd()
-	defer func() {
-		stopEtcd()
-	}()
-
-	stopSabakan, err := runSabakan()
-	if err != nil {
-		return 0, err
-	}
-	defer func() {
-		stopSabakan()
-	}()
 
 	return m.Run(), nil
 }
@@ -107,6 +95,7 @@ func runSabakan() (func(), error) {
 		"-etcd-tls-key", etcdKey,
 		"-advertise-url", "http://localhost:10080",
 		"-data-dir", dataDir,
+		"--metrics-interval", "100ms",
 	)
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr

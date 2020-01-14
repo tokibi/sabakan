@@ -178,28 +178,7 @@ func testSabactlIPAM(t *testing.T) {
 }
 
 func testSabactlMachines(t *testing.T) {
-	var conf = sabakan.IPAMConfig{
-		MaxNodesInRack:    28,
-		NodeIPv4Pool:      "10.69.0.0/20",
-		NodeIPv4Offset:    "",
-		NodeRangeSize:     6,
-		NodeRangeMask:     26,
-		NodeIPPerNode:     3,
-		NodeIndexOffset:   3,
-		NodeGatewayOffset: 1,
-		BMCIPv4Pool:       "10.72.16.0/20",
-		BMCIPv4Offset:     "0.0.1.0",
-		BMCRangeSize:      5,
-		BMCRangeMask:      20,
-		BMCGatewayOffset:  1,
-	}
-	stdout, stderr, err := runSabactlWithFile(t, &conf, "ipam", "set")
-	code := exitCode(err)
-	if code != ExitSuccess {
-		t.Log("stdout:", stdout.String())
-		t.Log("stderr:", stderr.String())
-		t.Fatal("exit code:", code)
-	}
+	stdout, stderr, err, code := setupIPAMConfig(t)
 
 	time.Sleep(100 * time.Millisecond)
 
@@ -393,6 +372,32 @@ func testSabactlMachines(t *testing.T) {
 		t.Log("stderr:", stderr.String())
 		t.Fatal("machine not removed", code)
 	}
+}
+
+func setupIPAMConfig(t *testing.T) (*bytes.Buffer, *bytes.Buffer, error, subcommands.ExitStatus) {
+	var conf = sabakan.IPAMConfig{
+		MaxNodesInRack:    28,
+		NodeIPv4Pool:      "10.69.0.0/20",
+		NodeIPv4Offset:    "",
+		NodeRangeSize:     6,
+		NodeRangeMask:     26,
+		NodeIPPerNode:     3,
+		NodeIndexOffset:   3,
+		NodeGatewayOffset: 1,
+		BMCIPv4Pool:       "10.72.16.0/20",
+		BMCIPv4Offset:     "0.0.1.0",
+		BMCRangeSize:      5,
+		BMCRangeMask:      20,
+		BMCGatewayOffset:  1,
+	}
+	stdout, stderr, err := runSabactlWithFile(t, &conf, "ipam", "set")
+	code := exitCode(err)
+	if code != ExitSuccess {
+		t.Log("stdout:", stdout.String())
+		t.Log("stderr:", stderr.String())
+		t.Fatal("exit code:", code)
+	}
+	return stdout, stderr, err, code
 }
 
 func testSabactlImages(t *testing.T) {
@@ -708,8 +713,8 @@ func testSabactlLogs(t *testing.T) {
 	}
 
 	now := time.Now().UTC()
-	tommorow := now.Add(24 * time.Hour)
-	stdout, stderr, err = runSabactl("logs", tommorow.Format("20060102"))
+	tomorrow := now.Add(24 * time.Hour)
+	stdout, stderr, err = runSabactl("logs", tomorrow.Format("20060102"))
 	code = exitCode(err)
 	if code != ExitSuccess {
 		t.Log("stdout:", stdout.String())
