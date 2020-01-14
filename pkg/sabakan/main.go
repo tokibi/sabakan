@@ -18,6 +18,7 @@ import (
 	"github.com/cybozu-go/log"
 	"github.com/cybozu-go/sabakan/v2"
 	"github.com/cybozu-go/sabakan/v2/dhcpd"
+	"github.com/cybozu-go/sabakan/v2/metrics"
 	"github.com/cybozu-go/sabakan/v2/models/etcd"
 	"github.com/cybozu-go/sabakan/v2/web"
 	"github.com/cybozu-go/well"
@@ -31,6 +32,7 @@ const (
 
 var (
 	flagHTTP         = flag.String("http", defaultListenHTTP, "<Listen IP>:<Port number>")
+	flagMetrics      = flag.String("metrics", defaultListenMetrics, "<Listen IP>:<Port number>")
 	flagDHCPBind     = flag.String("dhcp-bind", defaultDHCPBind, "bound ip addresses and port for dhcp server")
 	flagIPXEPath     = flag.String("ipxe-efi-path", defaultIPXEPath, "path to ipxe.efi")
 	flagDataDir      = flag.String("data-dir", defaultDataDir, "directory to store files")
@@ -91,6 +93,7 @@ func subMain(ctx context.Context) error {
 		cfg.IPXEPath = *flagIPXEPath
 		cfg.ListenHTTP = *flagHTTP
 		cfg.Playground = *flagPlayground
+		cfg.ListenMetrics = *flagMetrics
 
 		cfg.Etcd.Endpoints = strings.Split(*flagEtcdEndpoints, ",")
 		cfg.Etcd.Prefix = *flagEtcdPrefix
@@ -176,6 +179,17 @@ func subMain(ctx context.Context) error {
 		Env:             env,
 	}
 	s.ListenAndServe()
+
+	metricsHandler := metrics.GetHandler()
+	mux := http.NewServeMux()
+	mux.Handle("/metrics", metricsHandler)
+	ms := &well.HTTPServer{
+		Server: &http.Server{
+			Addr:    cfg.ListenMetrics,
+			Handler: mux,
+		},
+	}
+	ms.ListenAndServe()
 
 	env.Stop()
 	return env.Wait()

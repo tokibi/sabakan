@@ -21,8 +21,9 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/onsi/ginkgo v1.8.0
 	github.com/onsi/gomega v1.5.0
-	github.com/prometheus/client_golang v0.9.1 // indirect
-	github.com/prometheus/common v0.0.0-20181126121408-4724e9255275 // indirect
+	github.com/prometheus/client_golang v0.9.1
+	github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910
+	github.com/prometheus/common v0.0.0-20181126121408-4724e9255275
 	github.com/prometheus/procfs v0.0.0-20181126161756-619930b0b471 // indirect
 	github.com/sirupsen/logrus v1.2.0 // indirect
 	github.com/spf13/cast v1.3.0 // indirect
